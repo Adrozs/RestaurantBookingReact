@@ -131,3 +131,12 @@ body {
         text-align: center; /* Center text on larger screens */
     }
 }
+
+.form-width {
+    width: 80vw;
+    max-width: 370px;
+}
+
+.form-span-width {
+    width: 120px;
+}

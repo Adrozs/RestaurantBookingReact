@@ -46,15 +46,15 @@ export default function AvailableTableTimes({ selectedDate, numberOfGuests, onTa
             (table) => table.availableTime === selectedTime);
         
         // Set selected table
-        setSelectedTable(selectedTableObject); 
-
-
+        setSelectedTable(selectedTableObject);
+        
         // Pass the selected table back to the parent (the reservation form)
         const returnData = { 
-            tableId: selectedTableObject.tableId, 
-            availableTime: selectedTableObject.availableTime,
+            tableId: selectedTableObject.id, 
+            reservationTime: selectedTableObject.availableTime,
             // guests: numberOfGuests 
         };
+
         onTableSelect(returnData); 
     };
 

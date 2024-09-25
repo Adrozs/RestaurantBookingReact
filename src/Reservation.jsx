@@ -3,6 +3,7 @@ import axios from "axios";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import AvailableTableTimes from "./components/AvailableTableTimes";
+import AlertPopup from "./components/AlertPopup";
 
 
 
@@ -13,11 +14,9 @@ export default function Reservation() {
     const [numberOfGuests, setNumberOfGuests] = useState();
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [reservationData, setReservationData] = useState(null);
+    const [alertToggle, setAlertToggle] = useState(false);
     const [reservationDurationMinutes, setReservationDurationMinutes] = useState(0); // Maybe to be used in future (to set how long table is reserved for) already setup in backend if 0 is sent in it defaults to 120min (2 hours)
     const apiBaseUri = "https://localhost:7251/api";
-
-    // DEBUG
-    // console.log("RESERVATION DATA: ", reservationData);
 
 
     // Callback function from the AvailableTableTimes component - sets reservation data to the chosen table and time from the AvailableTableTimes component
@@ -38,12 +37,12 @@ export default function Reservation() {
         const CreateReservation = async () => {
             try {
                 // Make call to create customer (gets back customer id to use for booking) 
-                const user = {
+                const customer = {
                     name: `${firstName} ${lastName}`,
                     phoneNumber: phoneNumber,
                 };
-                const createUserResponse = await axios.post(`${apiBaseUri}/User/CreateUser`, user);
-                console.log(createUserResponse);
+                const createUserResponse = await axios.post(`${apiBaseUri}/Customer/CreateCustomer`, customer);
+                console.log("Response: ", createUserResponse);
 
                 const reservationRequest = {
                     reservationTime: reservationData.reservationTime,
@@ -53,17 +52,23 @@ export default function Reservation() {
                 };
 
                 const createReservationResponse = await axios.post(`${apiBaseUri}/Reservation/CreateReservation`, reservationRequest);
-                console.log(createReservationResponse);
+                console.log("Response: ", createReservationResponse);
 
                 // Do modal popup to say reservation made!
+                if(createReservationResponse.status == 200){
+                    setAlertToggle(true);
+
+                }
+
 
                 // Reset resevation data
             }
             catch (error) {
                 console.log("Error creating reservation:", error);
+                setAlertToggle(false); 
             }
         }
-       
+        CreateReservation();
     }
 
 
@@ -71,15 +76,16 @@ export default function Reservation() {
     return (
         <section className="container">
         <div className="row no-gutters">
-        <div className="col col-lg-6 offset-lg-3">
-            <h1 className="mb-4">Make a reservation</h1>
+        <div className="col col-lg-6 offset-lg-3 d-flex flex-column align-items-center align-content-center">
+            <AlertPopup toggle={alertToggle}/>
+            <h1 className="mb-4 mt-4">Make a reservation</h1>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="form-width">
                 {/* Customer info */}
                 <div className="form-group mb-4">
                     {/* First name */}
                     <div className="input-group mb-2">
-                        <span className="input-group-text">First name</span>
+                        <span className="input-group-text form-span-width">First name</span>
                         <input 
                             type="text" 
                             aria-label="First name" 
@@ -91,7 +97,7 @@ export default function Reservation() {
                     </div>
                     {/* Last name */}
                     <div className="input-group mb-2">
-                        <span className="input-group-text">Last name</span>
+                        <span className="input-group-text form-span-width">Last name</span>
                         <input 
                             type="text" 
                             aria-label="Last name" 
@@ -103,7 +109,7 @@ export default function Reservation() {
                     </div>
                     {/* Phone number */}
                     <div className="input-group mb-2">
-                        <span className="input-group-text">Phone</span>
+                        <span className="input-group-text form-span-width">Phone</span>
                         <input
                             type="text"
                             aria-label="Phone number"
@@ -135,11 +141,11 @@ export default function Reservation() {
                         <option value="7">7</option>
                         <option value="8">8</option>
                     </select>
-                    <small className="form-text text-muted">For larger reservations contact the restaurant directly</small>
+                    <small className="form-text text-muted fs-6 ">For larger reservations contact the restaurant directly</small>
                 </div>
                 
                 {/* Reservation date */}
-                <div>
+                <div className="calendar-container">
                     <label>Select reservation date</label>
                     <DayPicker
                         className="form-control mb-4"

@@ -8,7 +8,7 @@ export default function DatePicker() {
 
     return (
         <DayPicker
-            className="form-control mb-4"
+            className="form-control mb-4 d-flex justify-content-center"
             startMonth={new Date()}
             showOutsideDays="true"
             mode="single"
