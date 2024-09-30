@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-// tempdata used for testing before bulilding backend
-import jsonData from '../assets/availableTables.json'
-
-
 export default function AvailableTableTimes({ selectedDate, numberOfGuests, onTableSelect }) {
     const [availableTables, setAvailableTables] = useState([]);
     const [selectedTable, setSelectedTable] = useState(null);
